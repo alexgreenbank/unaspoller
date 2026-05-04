@@ -62,11 +62,7 @@ More info at [CONTRIBUTING.md](CONTRIBUTING.md).
 * Option to send log to file?
 * Sort out logging of unexpected/unparsed data outputs
 * Document things (specifically API and example responses in METRICS.md)
-* Write CONTRIBUTING.md
 * errors output with %w?
-
-* LICENSE
-* Make repo public
 
 * Clean up the `_test.go` files and add them to repo
 * Get feedback with real data (and bugs)
