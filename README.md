@@ -54,9 +54,9 @@ More info at [CONTRIBUTING.md](CONTRIBUTING.md).
     * Metrics host (for listening, currently defaults to 0.0.0.0)
     * Login credentials in a file?
 * Add remaining API endpoints to poll (drives, etc)
-* VALIDATE: find all values so far from own data...
 * PROBE MODE: Validate JSON
     * PROBE MODE: Validate values
+* meta-metrics for number of successful/failed polls, items not passing validation, etc
 * Scrub data before logging
 * Also log similar dumps when running if data not as expected
 * Option to send log to file?

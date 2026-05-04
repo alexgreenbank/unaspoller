@@ -224,7 +224,7 @@ func (u *UNAS) driveAPIV2SystemsDeviceInfoValidateStrict(obj any) error {
 	u.expectString(&ok, foo.Model, []string{"UNASPRO"}, "DriveApiV2SystemsDeviceInfo.Model")
 	u.expectIntRange(&ok, foo.Memory.Total, 8000000, 8500000, "DriveApiV2SystemsDeviceInfo.Memory.Total")
 	u.expectFloat64Range(&ok, foo.CPU.CurrentLoad, 0.0, 2.0, "DriveApiV2SystemsDeviceInfo.CPU.CurrentLoad")
-	u.expectIntRange(&ok, foo.CPU.Temperature, 30, 70, "DriveApiV2SystemsDeviceInfo.CPU.Temperature")
+	u.expectIntRange(&ok, foo.CPU.Temperature, 30, 80, "DriveApiV2SystemsDeviceInfo.CPU.Temperature")
 
 	if !ok {
 		return fmt.Errorf("errors during strict validation of /proxy/drive/api/v2/systems/device-info")
@@ -298,7 +298,7 @@ func (u *UNAS) driveAPIV2StorageValidateStrict(obj any) error {
 	for _, pdata := range foo.Pools {
 		u.expectString(&ok, pdata.PreferLevel, []string{"raid5"}, "DriveApiV2Storage.Pools.PreferLevel")
 		u.expectString(&ok, pdata.Type, []string{"lvm"}, "DriveApiV2Storage.Pools.Type")
-		u.expectString(&ok, pdata.Status, []string{"fullyOperational"}, "DriveApiV2Storage.Pools.Status")
+		u.expectString(&ok, pdata.Status, []string{"fullyOperational", "repairing", "noDataProtectionYet"}, "DriveApiV2Storage.Pools.Status")
 		for _, rgdata := range pdata.RaidGroups {
 			u.expectString(&ok, rgdata.RemnantReason, []string{""}, "DriveApiV2Storage.Pools.RaidGroups.RemnantReason")
 			u.expectString(&ok, rgdata.CurrentLevel, []string{"raid5", "raid1"}, "DriveApiV2Storage.Pools.RaidGroups.CurrentLevel")
@@ -306,25 +306,27 @@ func (u *UNAS) driveAPIV2StorageValidateStrict(obj any) error {
 			u.expectIntRange(&ok, rgdata.CurrentProtection, 0, 1, "DriveApiV2Storage.Pools.RaidGroups.CurrentProtection")
 			u.expectIntRange(&ok, rgdata.ExpectedProtection, 0, 1, "DriveApiV2Storage.Pools.RaidGroups.ExpectedProtection")
 			u.expectIntRange(&ok, rgdata.Progress, 0, 100, "DriveApiV2Storage.Pools.RaidGroups.Progress")
-			u.expectIntRange(&ok, rgdata.Estimate, 0, 10000, "DriveApiV2Storage.Pools.RaidGroups.Estimate")
+			u.expectIntRange(&ok, rgdata.Estimate, 0, 30000, "DriveApiV2Storage.Pools.RaidGroups.Estimate")
 		}
 		u.expectString(&ok, pdata.InitializingStatus, []string{"successful"}, "DriveApiV2Storage.Pools.InitializingStatus")
 	}
 
 	// Check disk data
 	for _, ddata := range foo.Disks {
-		u.expectString(&ok, ddata.Type, []string{"HDD"}, "DriveApiV2Storage.Disks.Type")
-		u.expectString(&ok, ddata.State, []string{"optimal"}, "DriveApiV2Storage.Disks.State")
-		u.expectInt(&ok, ddata.RPM, []int{5900, 7200}, "DriveApiV2Storage.Disks.RPM")
-		u.expectString(&ok, ddata.Sata, []string{"SATA 3.1"}, "DriveApiV2Storage.Disks.Sata")
-		u.expectString(&ok, ddata.Ata, []string{"ATA8-ACS", "ACS-3", "ACS-2,"}, "DriveApiV2Storage.Disks.Ata")
+		u.expectString(&ok, ddata.Type, []string{"HDD", ""}, "DriveApiV2Storage.Disks.Type")
+		u.expectString(&ok, ddata.State, []string{"optimal", "empty", "repairing", "scanning"}, "DriveApiV2Storage.Disks.State")
+		u.expectInt(&ok, ddata.RPM, []int{0, 5900, 7200}, "DriveApiV2Storage.Disks.RPM")
+		u.expectString(&ok, ddata.Sata, []string{"SATA 3.1", ""}, "DriveApiV2Storage.Disks.Sata")
+		u.expectString(&ok, ddata.Ata, []string{"ATA8-ACS", "ACS-3", "ACS-2,", ""}, "DriveApiV2Storage.Disks.Ata")
 		u.expectString(&ok, ddata.NvmeVersion, []string{""}, "DriveApiV2Storage.Disks.NvmeVersion")
-		u.expectString(&ok, ddata.SectorFormat, []string{"512E"}, "DriveApiV2Storage.Disks.SectorFormat")
-		u.expectIntRange(&ok, ddata.Temperature, 30, 70, "DriveApiV2Storage.Disks.Temperature")
+		u.expectString(&ok, ddata.SectorFormat, []string{"512E", ""}, "DriveApiV2Storage.Disks.SectorFormat")
+		if ddata.Temperature != 0 {
+			u.expectIntRange(&ok, ddata.Temperature, 20, 70, "DriveApiV2Storage.Disks.Temperature")
+		}
 		// not doing counters
 		u.expectIntRange(&ok, len(ddata.RiskReasons), 0, 0, "DriveApiV2Storage.Disks.RiskReasons.Len")
 		u.expectIntRange(&ok, len(ddata.IncompatibleReasons), 0, 0, "DriveApiV2Storage.Disks.IncompatibleReasons.Len")
-		u.expectIntRange(&ok, ddata.HealthScore, 1, 5, "DriveApiV2Storage.Disks.HealthScore")
+		u.expectIntRange(&ok, ddata.HealthScore, 0, 5, "DriveApiV2Storage.Disks.HealthScore")
 	}
 
 	u.expectIntRange(&ok, len(foo.CacheSlots), 0, 0, "DriveApiV2Storage.CacheSlots.Len")
