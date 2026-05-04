@@ -50,28 +50,7 @@ More info at [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## TODO
 
-* Command line flags
-    * Metrics host (for listening, currently defaults to 0.0.0.0)
-    * Login credentials in a file?
-* Add remaining API endpoints to poll (drives, etc)
-* PROBE MODE: Validate JSON
-    * PROBE MODE: Validate values
-* meta-metrics for number of successful/failed polls, items not passing validation, etc
-* Scrub data before logging
-* Also log similar dumps when running if data not as expected
-* Option to send log to file?
-* Sort out logging of unexpected/unparsed data outputs
-* Document things (specifically API and example responses in METRICS.md)
-* errors output with %w?
-
-* Clean up the `_test.go` files and add them to repo
-* Get feedback with real data (and bugs)
-* Find more possible endpoints (use developer console in Chrome and browse around UI lots)
-* Different poll frequency for different endpoints?
-* Handle multiple targets?
-    * Via a config file simplifies chance of different usernames/passwords
-    * label per target
-* Dockerfile
+Moved to https://github.com/alexgreenbank/unaspoller/issues/1
 
 ## Usage
 
