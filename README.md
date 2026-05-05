@@ -216,6 +216,12 @@ Notes:
 * `192.168.1.17` is the IP of my UNAS Pro. `192.168.1.11` is the IP of my homelab server I run exporters/Prometheus/etc on
 * (FUTURE) When/if I get round to adding an option to poll multiple UNAS devices from a single exporter instance I will include the ability to set a unique label/value for each target
 
+## Dashboard
+
+An example (very rough and ready) dashboard exists [static/unas_dashboard.json](static/unas_dashboard.json).
+
+![UNAS dashboard image](static/dashboard.png)
+
 ## Acknowledgements
 
 The https://unpoller.com/ project (also https://github.com/unpoller/) for the inspiration along with https://github.com/unpoller/unpoller/issues/785 that piqued my interest.
