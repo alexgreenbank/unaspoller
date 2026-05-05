@@ -33,6 +33,11 @@ type metrics struct {
 	diskReadKBPS                 *prometheus.GaugeVec
 	diskWriteKBPS                *prometheus.GaugeVec
 	diskHealthScore              *prometheus.GaugeVec
+	// /proxy/users/drive/api/v2/drives
+	nosDrives *prometheus.GaugeVec
+	// per Drive info
+	driveQuota *prometheus.GaugeVec
+	driveUsage *prometheus.GaugeVec
 }
 
 func (u *UNAS) newMetrics(reg prometheus.Registerer) *metrics {
@@ -214,6 +219,32 @@ func (u *UNAS) newMetrics(reg prometheus.Registerer) *metrics {
 				Help:      "The health score from 0=bad to 5=good",
 			},
 			[]string{"slotId", "serial"},
+		),
+		// Drives metrics
+		nosDrives: promauto.With(reg).NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: u.c.flagMetricPrefix,
+				Name:      "nos_drives",
+				Help:      "The number of drives by type",
+			},
+			[]string{"type"},
+		),
+		// Per drive metrics
+		driveUsage: promauto.With(reg).NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: u.c.flagMetricPrefix,
+				Name:      "drive_size",
+				Help:      "The size of the drive in bytes",
+			},
+			[]string{"name", "poolId"},
+		),
+		driveQuota: promauto.With(reg).NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: u.c.flagMetricPrefix,
+				Name:      "drive_quota",
+				Help:      "The size of the drive quota in bytes",
+			},
+			[]string{"name", "poolId"},
 		),
 	}
 	return m

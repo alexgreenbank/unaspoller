@@ -1,5 +1,34 @@
 package main
 
+type DriveApiV2DrivesDriveProtection struct {
+	EncryptionStatus    string `json:"encryptionStatus"`
+	RemoteBackupEnabled bool   `json:"remoteBackupEnabled"`
+	SnapshotEnabled     bool   `json:"snapshotEnabled"`
+}
+
+type DriveApiV2DrivesDrive struct {
+	Id                       string                          `json:"id"`
+	Type                     string                          `json:"type"`
+	Name                     string                          `json:"name"`
+	Status                   string                          `json:"status"`
+	StoragePoolId            string                          `json:"storagePoolId"`
+	DataSync                 string                          `json:"dataSync"`
+	RecordSize               string                          `json:"recordSize"`
+	CompressionLevel         string                          `json:"compressionLevel"`
+	Deduplication            string                          `json:"deduplication"`
+	DeduplicationEverEnabled bool                            `json:"deduplicationEverEnabled"`
+	Quota                    int64                           `json:"quota"`
+	Usage                    int64                           `json:"usage"`
+	Role                     string                          `json:"role"`
+	Protections              DriveApiV2DrivesDriveProtection `json:"protections"`
+	MemberCount              int                             `json:"memberCount"`
+}
+
+// /proxy/users/drive/api/v2/drives
+type DriveApiV2Drives struct {
+	Drives []DriveApiV2DrivesDrive `json:"drives"`
+}
+
 type DriveApiV2NetworkInterface struct {
 	Interface     string `json:"interface"`
 	InterfaceName string `json:"interfaceName"`

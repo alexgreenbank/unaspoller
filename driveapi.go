@@ -33,6 +33,7 @@ func (u *UNAS) registerAPIDefs() error {
 	var apidefs = []UNASDriveAPIDef{
 		{"/proxy/drive/api/v2/storage", (*UNAS).driveAPIV2StorageUnmarshal, (*UNAS).driveAPIV2StorageMetrics, (*UNAS).driveAPIV2StorageValidateStrict, nil},
 		{"/proxy/drive/api/v2/systems/device-info", (*UNAS).driveAPIV2SystemsDeviceInfoUnmarshal, (*UNAS).driveAPIV2SystemsDeviceInfoMetrics, (*UNAS).driveAPIV2SystemsDeviceInfoValidateStrict, nil},
+		{"/proxy/users/drive/api/v2/drives", (*UNAS).driveAPIV2DrivesUnmarshal, (*UNAS).driveAPIV2DrivesMetrics, (*UNAS).driveAPIV2DrivesValidateStrict, nil},
 	}
 	for _, a := range apidefs {
 		err := u.registerAPIDef(a.url, &a)
@@ -176,6 +177,60 @@ func (u *UNAS) doDriveAPIDef(apiPath string) error {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // API Specific parts below here
+
+// //////////////////////////////////////////////////////////////////////////////
+// /proxy/users/drive/api/v2/drives
+func (u *UNAS) driveAPIV2DrivesUnmarshal(body []byte) (error, any) {
+	var foo DriveApiV2Drives
+	err := json.Unmarshal(body, &foo)
+	if err != nil {
+		u.c.log.Errorf("failed to Unmarshal DriveApiV2Drives: %w", err)
+		return err, nil
+	}
+	return nil, foo
+}
+
+func (u *UNAS) driveAPIV2DrivesMetrics(obj any) error {
+	var foo DriveApiV2Drives
+
+	foo = obj.(DriveApiV2Drives)
+
+	driveTypeCount := make(map[string]int)
+	for _, ddata := range foo.Drives {
+		u.m.driveUsage.WithLabelValues(ddata.Name, ddata.StoragePoolId).Set(float64(ddata.Usage))
+		u.m.driveQuota.WithLabelValues(ddata.Name, ddata.StoragePoolId).Set(float64(ddata.Quota))
+		driveTypeCount[ddata.Type]++
+	}
+
+	for k, v := range driveTypeCount {
+		u.m.nosDrives.WithLabelValues(k).Set(float64(v))
+	}
+
+	return nil
+}
+
+func (u *UNAS) driveAPIV2DrivesValidateStrict(obj any) error {
+	var foo DriveApiV2Drives
+	ok := true
+
+	foo = obj.(DriveApiV2Drives)
+
+	for _, ddata := range foo.Drives {
+		u.expectString(&ok, ddata.Type, []string{"shared"}, "DriveApiV2DrivesDrive.Type")
+		u.expectString(&ok, ddata.Status, []string{"active"}, "DriveApiV2DrivesDrive.Status")
+		u.expectString(&ok, ddata.DataSync, []string{""}, "DriveApiV2DrivesDrive.DataSync")
+		u.expectString(&ok, ddata.RecordSize, []string{""}, "DriveApiV2DrivesDrive.RecordSize")
+		u.expectString(&ok, ddata.CompressionLevel, []string{""}, "DriveApiV2DrivesDrive.CompressionLevel")
+		u.expectString(&ok, ddata.Deduplication, []string{""}, "DriveApiV2DrivesDrive.Deduplication")
+		u.expectString(&ok, ddata.Role, []string{"admin"}, "DriveApiV2DrivesDrive.Role")
+		u.expectString(&ok, ddata.Protections.EncryptionStatus, []string{"unencrypted"}, "DriveApiV2DrivesDriveProtecitons.EncryptionStatus")
+	}
+
+	if !ok {
+		return fmt.Errorf("errors during strict validation of /proxy/users/drive/api/v2/drives")
+	}
+	return nil
+}
 
 // //////////////////////////////////////////////////////////////////////////////
 // /proxy/drive/api/v2/systems/device-info
