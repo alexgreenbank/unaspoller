@@ -20,10 +20,8 @@ func scrubKeyString(data, key, replace string) string {
 		if i == -1 {
 			break
 		}
-		// Move start far enough along we don't hit the same key again
-		start += i + len(key)
 		// Find the start of the value
-		valStart := i + 1 + len(key) + 1 + 1 // " <key> " :
+		valStart := start + i + 1 + len(key) + 1 + 1 // " <key> " :
 		// We should be at the " now
 		valEnd := valStart + 1
 		for valEnd < len(curr) && curr[valEnd] != '"' {
@@ -36,6 +34,8 @@ func scrubKeyString(data, key, replace string) string {
 			return curr
 		}
 		curr = curr[0:valStart] + "\"" + replace + curr[valEnd:]
+		// Move start far enough along we don't hit the same key again
+		start += i + len(key)
 	}
 	return curr
 }
