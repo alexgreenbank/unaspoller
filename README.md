@@ -20,7 +20,7 @@ The metrics produced are documented at [METRICS.md](METRICS.md) along with detai
 
 ## Current Status
 
-Right now (v0.0.1) the poller is very limited. There are two major areas it needs work on right now:
+Right now (v0.0.4) the poller is very limited. There are two major areas it needs work on right now:
 
 ### Limited data for API responses
 

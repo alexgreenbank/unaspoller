@@ -69,14 +69,15 @@ func (u *UNAS) doProbeKnownURLs(fname string) (error, int, int, int, int) {
 			// do something with body
 			// TODO - validate JSON is as expected (if known)
 			// TODO - validate individual values (if known)
-			// FIXME - scrub possible sensitive info
+			// scrub possible sensitive info
+			scrubbed := scrub(knownURL, body)
 			// Just print it for now
 			if u.probeFile != nil {
 				fmt.Fprintf(u.probeFile, "PROBE:[%s]: resp=[", knownURL)
-				u.probeFile.Write(body)
+				u.probeFile.Write(scrubbed)
 				u.probeFile.WriteString("]\n")
 			} else {
-				fmt.Printf("PROBE:[%s]: resp=[%s]\n", knownURL, string(body))
+				fmt.Printf("PROBE:[%s]: resp=[%s]\n", knownURL, string(scrubbed))
 			}
 		}
 	}
