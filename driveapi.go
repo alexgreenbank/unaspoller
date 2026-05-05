@@ -426,23 +426,3 @@ func (u *UNAS) driveAPIV2StorageValidateStrict(obj any) error {
 	}
 	return nil
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// TODO
-
-// TODO - work out if /proxy/drive/api/v1/systems/storage?type=detail is useful
-
-// TODO - Poll for /proxy/drive/api/v2/systems/disk-stats?start=1777584669&end=1777671969&interval=900
-// But not 15 minute intervals
-// Maybe only do this every 5 minutes or so
-
-// TODO - Poll for /proxy/drive/api/v2/systems/network-io
-// receiveKBPS and transmitKBPS
-
-// TODO - Anything useful in /proxy/users/drive/api/v1/systems/info ?
-
-// TODO - Do /proxy/users/drive/api/v2/drives (as in shared drives and personal drives)
-// Some useful info about quotas, usage, etc
-//      "quota": -1,
-//      "usage": 3386213269504,
-//      "memberCount": 3
