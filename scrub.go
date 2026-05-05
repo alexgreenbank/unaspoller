@@ -15,17 +15,17 @@ import (
 func scrubKeyString(data, key, replace string) string {
 	curr := data
 	start := 0
-	for start < len(curr ) {
+	for start < len(curr) {
 		i := strings.Index(curr[start:], "\""+key+"\"")
 		if i == -1 {
 			break
 		}
 		// Move start far enough along we don't hit the same key again
-		start += i+len(key)
+		start += i + len(key)
 		// Find the start of the value
-		valStart := i+1+len(key)+1+1	// " <key> " :
+		valStart := i + 1 + len(key) + 1 + 1 // " <key> " :
 		// We should be at the " now
-		valEnd := valStart+1
+		valEnd := valStart + 1
 		for valEnd < len(curr) && curr[valEnd] != '"' {
 			valEnd++
 		}
@@ -35,7 +35,7 @@ func scrubKeyString(data, key, replace string) string {
 			// TODO - how to report error?
 			return curr
 		}
-		curr = curr[0:valStart] + "\""+replace+curr[valEnd:]
+		curr = curr[0:valStart] + "\"" + replace + curr[valEnd:]
 	}
 	return curr
 }
@@ -56,13 +56,13 @@ func scrub(url string, data []byte) []byte {
 	case "/proxy/users/drive/api/v2/drives":
 		curr = scrubKeyString(curr, "id", "scrubbed")
 		curr = scrubKeyString(curr, "name", "scrubbed")
-	// /proxy/drive/api/v1/systems/performance/file-operations
-	// /proxy/drive/api/v1/systems/storage?type=detail
-	// /proxy/drive/api/v2/systems/disk-stats?start=1777850684&end=1777937984&interval=900
-	// /proxy/drive/api/v2/systems/network-io
-	// /proxy/users/drive/api/v1/systems/identity
-	// /proxy/users/drive/api/v2/groups
-	// /proxy/users/drive/api/v2/storage
+		// /proxy/drive/api/v1/systems/performance/file-operations
+		// /proxy/drive/api/v1/systems/storage?type=detail
+		// /proxy/drive/api/v2/systems/disk-stats?start=1777850684&end=1777937984&interval=900
+		// /proxy/drive/api/v2/systems/network-io
+		// /proxy/users/drive/api/v1/systems/identity
+		// /proxy/users/drive/api/v2/groups
+		// /proxy/users/drive/api/v2/storage
 	}
 	return []byte(curr)
 }
