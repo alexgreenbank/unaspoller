@@ -1,5 +1,13 @@
 package main
 
+// /proxy/drive/api/v2/systems/network-io
+type DriveApiV2SystemsNetworkIO struct {
+	ReceiveKBPS  float64 `json:"receiveKBPS"`
+	TransmitKBPS float64 `json:"transmitKBPS"`
+	Timestamp    string  `json:"timestamp"`
+}
+
+// /proxy/users/drive/api/v2/drives
 type DriveApiV2DrivesDriveProtection struct {
 	EncryptionStatus    string `json:"encryptionStatus"`
 	RemoteBackupEnabled bool   `json:"remoteBackupEnabled"`
@@ -24,7 +32,6 @@ type DriveApiV2DrivesDrive struct {
 	MemberCount              int                             `json:"memberCount"`
 }
 
-// /proxy/users/drive/api/v2/drives
 type DriveApiV2Drives struct {
 	Drives []DriveApiV2DrivesDrive `json:"drives"`
 }

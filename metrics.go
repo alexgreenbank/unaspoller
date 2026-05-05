@@ -38,6 +38,9 @@ type metrics struct {
 	// per Drive info
 	driveQuota *prometheus.GaugeVec
 	driveUsage *prometheus.GaugeVec
+	// /proxy/drive/api/v2/systems/network-io
+	netReceiveKBPS  prometheus.Gauge
+	netTransmitKBPS prometheus.Gauge
 }
 
 func (u *UNAS) newMetrics(reg prometheus.Registerer) *metrics {
@@ -246,6 +249,19 @@ func (u *UNAS) newMetrics(reg prometheus.Registerer) *metrics {
 			},
 			[]string{"name", "poolId"},
 		),
+		// Network-IO metrics
+		netReceiveKBPS: promauto.With(reg).NewGauge(
+			prometheus.GaugeOpts{
+				Namespace: u.c.flagMetricPrefix,
+				Name:      "network_receive_kbps",
+				Help:      "Network traffic received in KBps",
+			}),
+		netTransmitKBPS: promauto.With(reg).NewGauge(
+			prometheus.GaugeOpts{
+				Namespace: u.c.flagMetricPrefix,
+				Name:      "network_transmit_kbps",
+				Help:      "Network traffic transmitted in KBps",
+			}),
 	}
 	return m
 }

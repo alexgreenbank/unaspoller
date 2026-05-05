@@ -34,6 +34,7 @@ func (u *UNAS) registerAPIDefs() error {
 		{"/proxy/drive/api/v2/storage", (*UNAS).driveAPIV2StorageUnmarshal, (*UNAS).driveAPIV2StorageMetrics, (*UNAS).driveAPIV2StorageValidateStrict, nil},
 		{"/proxy/drive/api/v2/systems/device-info", (*UNAS).driveAPIV2SystemsDeviceInfoUnmarshal, (*UNAS).driveAPIV2SystemsDeviceInfoMetrics, (*UNAS).driveAPIV2SystemsDeviceInfoValidateStrict, nil},
 		{"/proxy/users/drive/api/v2/drives", (*UNAS).driveAPIV2DrivesUnmarshal, (*UNAS).driveAPIV2DrivesMetrics, (*UNAS).driveAPIV2DrivesValidateStrict, nil},
+		{"/proxy/drive/api/v2/systems/network-io", (*UNAS).driveAPIV2SystemsNetworkIOUnmarshal, (*UNAS).driveAPIV2SystemsNetworkIOMetrics, (*UNAS).driveAPIV2SystemsNetworkIOValidateStrict, nil},
 	}
 	for _, a := range apidefs {
 		err := u.registerAPIDef(a.url, &a)
@@ -177,6 +178,41 @@ func (u *UNAS) doDriveAPIDef(apiPath string) error {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // API Specific parts below here
+
+// //////////////////////////////////////////////////////////////////////////////
+// /proxy/drive/api/v2/systems/network-io
+func (u *UNAS) driveAPIV2SystemsNetworkIOUnmarshal(body []byte) (error, any) {
+	var foo DriveApiV2SystemsNetworkIO
+	err := json.Unmarshal(body, &foo)
+	if err != nil {
+		u.c.log.Errorf("failed to Unmarshal DriveApiV2SystemsNetworkIO: %w", err)
+		return err, nil
+	}
+	return nil, foo
+}
+
+func (u *UNAS) driveAPIV2SystemsNetworkIOMetrics(obj any) error {
+	var foo DriveApiV2SystemsNetworkIO
+
+	foo = obj.(DriveApiV2SystemsNetworkIO)
+
+	u.m.netReceiveKBPS.Set(foo.ReceiveKBPS)
+	u.m.netTransmitKBPS.Set(foo.TransmitKBPS)
+
+	return nil
+}
+
+func (u *UNAS) driveAPIV2SystemsNetworkIOValidateStrict(obj any) error {
+	// var foo DriveApiV2SystemsNetworkIO
+	ok := true
+
+	// foo = obj.(DriveApiV2SystemsNetworkIO)
+
+	if !ok {
+		return fmt.Errorf("errors during strict validation of /proxy/users/drive/api/v2/drives")
+	}
+	return nil
+}
 
 // //////////////////////////////////////////////////////////////////////////////
 // /proxy/users/drive/api/v2/drives

@@ -2,3 +2,4 @@ v0.0.1 - 2026-05-04 - Initial upload
 v0.0.2 - 2026-05-04 - Added remaining witnessed values to validations
 v0.0.3 - 2026-05-05 - Added /proxy/users/drive/api/V2/drives
 v0.0.4 - 2026-05-05 - Added basic scrubbing functionality for -probe mode
+v0.0.5 - 2026-05-05 - Added /proxy/drive/api/v2/systems/network-io

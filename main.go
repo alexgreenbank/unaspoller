@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	version = "v0.0.4"
+	version = "v0.0.5"
 )
 
 func (u *UNAS) mainPollLoop() error {
@@ -22,6 +22,7 @@ func (u *UNAS) mainPollLoop() error {
 			"/proxy/drive/api/v2/storage",
 			"/proxy/drive/api/v2/systems/device-info",
 			"/proxy/users/drive/api/v2/drives",
+			"/proxy/drive/api/v2/systems/network-io",
 		}
 		for _, url := range pollURLs {
 			u.c.log.Debugf("Polling %s\n", url)
