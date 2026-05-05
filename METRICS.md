@@ -20,6 +20,9 @@ Device metrics:
 # HELP unas_up Whether the UNAS is up or not TODO - fix me
 # TYPE unas_up gauge
 unas_up{firmware_version="5.0.17",model="UNASPRO",name="unas01",version="4.1.16"} 1
+# HELP unas_uptime Uptime in seconds of the device
+# TYPE unas_uptime gauge
+unas_uptime 920112.163195206
 # HELP unas_cpu_load CPU load of UNAS device
 # TYPE unas_cpu_load gauge
 unas_cpu_load 0.055

@@ -8,6 +8,7 @@ import (
 type metrics struct {
 	// /drive/api/v2/systems/device-info
 	upGauge  *prometheus.GaugeVec
+	uptime   prometheus.Gauge
 	memFree  prometheus.Gauge
 	memTotal prometheus.Gauge
 	memAvail prometheus.Gauge
@@ -54,6 +55,12 @@ func (u *UNAS) newMetrics(reg prometheus.Registerer) *metrics {
 			},
 			[]string{"name", "model", "version", "firmware_version"},
 		),
+		uptime: promauto.With(reg).NewGauge(
+			prometheus.GaugeOpts{
+				Namespace: u.c.flagMetricPrefix,
+				Name:      "uptime",
+				Help:      "Uptime in seconds of the device",
+			}),
 		memFree: promauto.With(reg).NewGauge(
 			prometheus.GaugeOpts{
 				Namespace: u.c.flagMetricPrefix,

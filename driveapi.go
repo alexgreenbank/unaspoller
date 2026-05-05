@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // OK, each API endpoint has a function to unmarshal it and to extract and populate the metrics
@@ -287,7 +288,15 @@ func (u *UNAS) driveAPIV2SystemsDeviceInfoMetrics(obj any) error {
 
 	u.m.upGauge.WithLabelValues(foo.Name, foo.Model, foo.Version, foo.FirmwareVersion).Set(1.0)
 
-	// TODO - calculate uptime from foo.StartupTime (e.g. "2026-04-24T22:20:27Z")
+	// Calculate uptime from foo.StartupTime (e.g. "2026-04-24T22:20:27Z")
+	startupTime, err := time.Parse("2006-01-02T15:04:05Z", foo.StartupTime)
+	if err == nil {
+		uptime := time.Since(startupTime).Seconds()
+		u.m.uptime.Set(uptime)
+	} else {
+		u.c.log.Debugf("failed to parse DriveApiV2SystemsDeviceInfo.StartupTime value=[%s]: %w", foo.StartupTime, err)
+	}
+
 	// TODO - foo.Status? ("STATE_RUNNING")
 
 	u.m.memFree.Set(float64(foo.Memory.Free))
