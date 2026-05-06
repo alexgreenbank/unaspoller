@@ -56,13 +56,16 @@ func scrub(url string, data []byte) []byte {
 	case "/proxy/users/drive/api/v2/drives":
 		curr = scrubKeyString(curr, "id", "scrubbed")
 		curr = scrubKeyString(curr, "name", "scrubbed")
-		// /proxy/drive/api/v1/systems/performance/file-operations
-		// /proxy/drive/api/v1/systems/storage?type=detail
+	default:
+	// Nothing to scrub (as far as I know)
 		// /proxy/drive/api/v2/systems/disk-stats?start=1777850684&end=1777937984&interval=900
-		// /proxy/drive/api/v2/systems/network-io
 		// /proxy/users/drive/api/v1/systems/identity
-		// /proxy/users/drive/api/v2/groups
+		// /proxy/drive/api/v1/systems/performance/file-operations
+		// /proxy/drive/api/v2/systems/network-io
+		// /proxy/drive/api/v1/systems/storage?type=detail
 		// /proxy/users/drive/api/v2/storage
+	// Need more detail
+		// /proxy/users/drive/api/v2/groups
 	}
 	return []byte(curr)
 }

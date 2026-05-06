@@ -1,5 +1,42 @@
 package main
 
+// /proxy/drive/api/v2/systems/disk-stats
+// UI has different durations it can query
+// 1M: ?start=1775452607&end=1778066207&interval=21600	period=30d+6h	interval = 6h
+// 1W: ?start=1777457812&end=1778066212&interval=3600	period=7d+1h	interval = 1h
+// 1D: ?start=1777978915&end=1778066215&interval=900	period=24h+15m	interval = 15m
+// 1H: ?start=1778061721&end=1778066221&interval=900	period=1h+15m	interval = 15m
+type DriveApiV2SystemsDiskStatsSeriesDisk struct {
+	SlotId string `json:"slotId"`
+	Type string `json:"type"`
+	Serial string `json:"serial"`
+	Temperatures []float64 `json:"temperatures"`
+	ReadKBPS []float64 `json:"readKBPS"`
+	WriteKBPS []float64 `json:"writeKBPS"`
+	BadSectorCount []int `json:"badSectorCount"`
+}
+
+type DriveApiV2SystemsDiskStatsSeriesCacheSlot struct {
+	// TODO - NO IDEA - NEED DATA
+}
+
+type DriveApiV2SystemsDiskStatsSeries struct {
+	Disks	[]DriveApiV2SystemsDiskStatsSeriesDisk `json:"disks"`
+	CacheSlots []DriveApiV2SystemsDiskStatsSeriesCacheSlot `json:"cacheSlots"`
+}
+
+type DriveApiV2SystemsDiskStatsWindow struct {
+	Samples  int `json:"samples"`
+	Start    int `json:"start"`
+	End      int `json:"end"`
+	Interval int `json:"interval"`
+}
+
+type DriveApiV2SystemsDiskStats struct {
+	Series DriveApiV2SystemsDiskStatsSeries `json:"series"`
+	Window DriveApiV2SystemsDiskStatsWindow `json:"window"`
+}
+
 // /proxy/drive/api/v2/systems/network-io
 type DriveApiV2SystemsNetworkIO struct {
 	ReceiveKBPS  float64 `json:"receiveKBPS"`
@@ -48,7 +85,7 @@ type DriveApiV2NetworkInterface struct {
 
 type DriveApiV2CPU struct {
 	CurrentLoad float64 `json:"currentLoad"`
-	Temperature int     `json:"temperature"`
+	Temperature int     `json:"temperature"`	// float64? - only ever seen ints
 }
 
 type DriveApiV2Memory struct {
@@ -125,12 +162,12 @@ type DriveApiV2Disk struct {
 	Firmware                 string                         `json:"firmware"`
 	SectorFormat             string                         `json:"sectorFormat"`
 	Serial                   string                         `json:"serial"`
-	Temperature              int                            `json:"temperature"`
+	Temperature              int                            `json:"temperature"`			// float64? - only ever seen ints
 	PowerOnHours             int                            `json:"powerOnHours"`
-	BadSectorCount           int                            `json:"badSectorCount"`
-	UncorrectableSectorCount int                            `json:"uncorrectableSectorCount"`
+	BadSectorCount           int                            `json:"badSectorCount"`			// int64?
+	UncorrectableSectorCount int                            `json:"uncorrectableSectorCount"`	// int64?
 	ReadErrorRate            int                            `json:"readErrorRate"`
-	SmartReadErrorCount      int                            `json:"smartReadErrorCount"`
+	SmartReadErrorCount      int                            `json:"smartReadErrorCount"`		// int64?
 	RiskReasons              []DriveApiV2RiskReason         `json:"riskReasons"`
 	IncompatibleReasons      []DriveApiV2IncompatibleReason `json:"incompatibleReasons"`
 	ReadKBPS                 float64                        `json:"readKBPS"`

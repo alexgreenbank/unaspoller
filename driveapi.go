@@ -36,6 +36,7 @@ func (u *UNAS) registerAPIDefs() error {
 		{"/proxy/drive/api/v2/systems/device-info", (*UNAS).driveAPIV2SystemsDeviceInfoUnmarshal, (*UNAS).driveAPIV2SystemsDeviceInfoMetrics, (*UNAS).driveAPIV2SystemsDeviceInfoValidateStrict, nil},
 		{"/proxy/users/drive/api/v2/drives", (*UNAS).driveAPIV2DrivesUnmarshal, (*UNAS).driveAPIV2DrivesMetrics, (*UNAS).driveAPIV2DrivesValidateStrict, nil},
 		{"/proxy/drive/api/v2/systems/network-io", (*UNAS).driveAPIV2SystemsNetworkIOUnmarshal, (*UNAS).driveAPIV2SystemsNetworkIOMetrics, (*UNAS).driveAPIV2SystemsNetworkIOValidateStrict, nil},
+		{"/proxy/drive/api/v2/systems/disk-stats", (*UNAS).driveAPIV2SystemsDiskStatsUnmarshal, (*UNAS).driveAPIV2SystemsDiskStatsMetrics, (*UNAS).driveAPIV2SystemsDiskStatsValidateStrict, nil},
 	}
 	for _, a := range apidefs {
 		err := u.registerAPIDef(a.url, &a)
@@ -181,6 +182,51 @@ func (u *UNAS) doDriveAPIDef(apiPath string) error {
 // API Specific parts below here
 
 // //////////////////////////////////////////////////////////////////////////////
+// /proxy/drive/api/v2/systems/disk-stats
+func (u *UNAS) driveAPIV2SystemsDiskStatsUnmarshal(body []byte) (error, any) {
+	var foo DriveApiV2SystemsDiskStats
+	err := json.Unmarshal(body, &foo)
+	if err != nil {
+		u.c.log.Errorf("failed to Unmarshal DriveApiV2SystemsDiskStats: %w", err)
+		return err, nil
+	}
+	return nil, foo
+}
+
+func (u *UNAS) driveAPIV2SystemsDiskStatsMetrics(obj any) error {
+	// var foo DriveApiV2SystemsDiskStats
+
+	// foo = obj.(DriveApiV2SystemsDiskStats)
+
+	// This API call doesn't give us any information we haven't learned from the per disk info
+	// in /proxy/drive/api/v2/storage
+
+	// So we don't create metrics here
+	return nil
+}
+
+func (u *UNAS) driveAPIV2SystemsDiskStatsValidateStrict(obj any) error {
+	var foo DriveApiV2SystemsDiskStats
+	ok := true
+
+	foo = obj.(DriveApiV2SystemsDiskStats)
+
+	for _, ddata := range foo.Series.Disks {
+		u.expectString(&ok, ddata.Type, []string{"HDD", ""}, "DriveApiV2SystemsDiskStats.Disks.Type")
+		for _, temp := range ddata.Temperatures {
+			if temp != 0 {
+				u.expectFloat64Range(&ok, temp, 20, 70, "DriveApiV2SystemsDiskStats.Disks.Temperatures")
+			}
+		}
+	}
+
+	if !ok {
+		return fmt.Errorf("errors during strict validation of /proxy/drive/api/v2/systems/disk-stats")
+	}
+	return nil
+}
+
+// //////////////////////////////////////////////////////////////////////////////
 // /proxy/drive/api/v2/systems/network-io
 func (u *UNAS) driveAPIV2SystemsNetworkIOUnmarshal(body []byte) (error, any) {
 	var foo DriveApiV2SystemsNetworkIO
@@ -210,7 +256,7 @@ func (u *UNAS) driveAPIV2SystemsNetworkIOValidateStrict(obj any) error {
 	// foo = obj.(DriveApiV2SystemsNetworkIO)
 
 	if !ok {
-		return fmt.Errorf("errors during strict validation of /proxy/users/drive/api/v2/drives")
+		return fmt.Errorf("errors during strict validation of /proxy/drive/api/v2/systems/network-io")
 	}
 	return nil
 }
