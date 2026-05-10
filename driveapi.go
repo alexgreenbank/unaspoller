@@ -363,7 +363,7 @@ func (u *UNAS) driveAPIV2SystemsDeviceInfoValidateStrict(obj any) error {
 	for _, ni := range foo.NetworkInterfaces {
 		u.expectString(&ok, ni.Interface, []string{"ethernet", "sfp+"}, "DriveApiV2SystemsDeviceInfo.Status")
 		u.expectString(&ok, ni.MaxSpeed, []string{"GbE", "10 GbE"}, "DriveApiV2SystemsDeviceInfo.MaxSpeed")
-		u.expectString(&ok, ni.LinkSpeed, []string{"GbE", ""}, "DriveApiV2SystemsDeviceInfo.LinkSpeed")
+		u.expectString(&ok, ni.LinkSpeed, []string{"GbE", "10 GbE", ""}, "DriveApiV2SystemsDeviceInfo.LinkSpeed")
 	}
 
 	u.expectString(&ok, foo.Model, []string{"UNASPRO"}, "DriveApiV2SystemsDeviceInfo.Model")

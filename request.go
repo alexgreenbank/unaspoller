@@ -104,10 +104,10 @@ func (u *UNAS) doRequest(req *http.Request) ([]byte, error) {
 		u.c.log.Debugf("Attempt %d/%d to perform %s %s", attempt+1, u.c.nos429retries, req.Method, req.URL)
 
 		resp, err := u.doRequestOnce(req)
-		defer resp.Body.Close()
 		if err != nil {
 			return []byte{}, fmt.Errorf("doRequestOnce: %w", err)
 		}
+		defer resp.Body.Close()
 
 		// Happy path
 		if resp.StatusCode == http.StatusOK {

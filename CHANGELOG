@@ -6,3 +6,4 @@ v0.0.5 - 2026-05-05 - Added /proxy/drive/api/v2/systems/network-io
 v0.0.6 - 2026-05-05 - Fix bug in scrub - add scrub tests
 v0.0.7 - 2026-05-05 - Added unas_uptime from StartupTime in /proxy/drive/api/v2/systems/device-info
 v0.0.8 - 2026-05-06 - Added /proxy/drive/api/v2/systems/disk-stats validation
+v0.0.9 - 2026-05-10 - Added "10 GbE" LinkSpeed and fixed file close bug in doRequest()

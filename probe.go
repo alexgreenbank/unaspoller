@@ -39,45 +39,48 @@ func (u *UNAS) doProbeKnownURLs(fname string) (error, int, int, int, int) {
 	nosUnmarshalError := 0
 	nosValidationError := 0
 
-	for i, knownURL := range knownURLs {
+	for i, baseURL := range knownURLs {
 		if i > 0 {
 			u.c.log.Debugf("Sleeping for %s between polls", u.c.durBetweenProbes)
 			time.Sleep(u.c.durBetweenProbes)
 		}
 
-		if knownURL == "/proxy/drive/api/v2/systems/disk-stats" {
+		// We may need to append or otherwise modify the URL
+		probeURL := baseURL
+
+		if baseURL == "/proxy/drive/api/v2/systems/disk-stats" {
 			// Add on a param for
 			// ?start=1777565467&end=1777652767&interval=900
 			now := time.Now().Unix()
-			knownURL += fmt.Sprintf("?start=%d&end=%d&interval=900", now-87300, now)
+			probeURL += fmt.Sprintf("?start=%d&end=%d&interval=900", now-87300, now)
 		}
 
 		u.c.log.Debugf("Probing URL %d of %d", i+1, len(knownURLs))
-		body, err := u.doGetRequest(knownURL)
+		body, err := u.doGetRequest(probeURL)
 		if err != nil {
 			nosHTTPError++
 			u.c.log.Errorf("doRequest: %w", err)
 			// Don't add the body here
 			if u.probeFile != nil {
-				fmt.Fprintf(u.probeFile, "PROBE:ERROR:[%s]: err=[%s]\n", knownURL, err)
+				fmt.Fprintf(u.probeFile, "PROBE:ERROR:[%s]: err=[%s]\n", probeURL, err)
 			} else {
-				fmt.Printf("PROBE:ERROR:[%s]: err=[%s]\n", knownURL, err)
+				fmt.Printf("PROBE:ERROR:[%s]: err=[%s]\n", probeURL, err)
 			}
 		} else {
 			u.c.log.Debugf("Probe of URL successful")
 			nosOK++
 			// do something with body
-			// TODO - validate JSON is as expected (if known)
+			// TODO - validate JSON (i.e. it parses) as expected (if known)
 			// TODO - validate individual values (if known)
 			// scrub possible sensitive info
-			scrubbed := scrub(knownURL, body)
+			scrubbed := scrub(baseURL, body)
 			// Just print it for now
 			if u.probeFile != nil {
-				fmt.Fprintf(u.probeFile, "PROBE:[%s]: resp=[", knownURL)
+				fmt.Fprintf(u.probeFile, "PROBE:[%s]: resp=[", probeURL)
 				u.probeFile.Write(scrubbed)
 				u.probeFile.WriteString("]\n")
 			} else {
-				fmt.Printf("PROBE:[%s]: resp=[%s]\n", knownURL, string(scrubbed))
+				fmt.Printf("PROBE:[%s]: resp=[%s]\n", probeURL, string(scrubbed))
 			}
 		}
 	}
